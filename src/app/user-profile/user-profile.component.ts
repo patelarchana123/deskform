@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {AbstractControl, FormBuilder,FormGroup,Validators} from '@angular/forms';
+import {AbstractControl, FormBuilder,FormGroup,Validators,FormsModule} from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-user-profile',
@@ -11,17 +11,14 @@ export class UserProfileComponent implements OnInit {
   submitted = false;
   phoneNumberPattern = "^[0-9]+$";
   url="../../assets/images/profile.png";
-  private base64textString:String="";
 
+   
   constructor(private formBuilder: FormBuilder,private toastr: ToastrService) {
     
     this.form = this.formBuilder.group(
       {
-    profileImage: [null, {
-      required: true,
-      accept: ['image/jpeg', 'image/png']
-    }],
-     phoneNumber : [
+        profileImage:[''],
+        phoneNumber : [
       '' , 
       [Validators.required,
         Validators.minLength(10),
@@ -31,7 +28,7 @@ export class UserProfileComponent implements OnInit {
       ],
      designation : ['' , Validators.required],
      modeOfWork : ['' , Validators.required],
-     selectedDays: [[], Validators.compose([Validators.required, Validators.maxLength(4)])],
+     days:['',Validators.required,Validators.maxLength(4)],
      city : ['' , Validators.required],
      floor : ['' , Validators.required],
      column : ['', Validators.required],
@@ -52,41 +49,70 @@ export class UserProfileComponent implements OnInit {
     }
  }
 
-  onSelect(event){
-  if(event.target.files){
-  let reader = new FileReader();
-  console.log(reader , typeof(reader));
-  reader.readAsDataURL(event.target.files[0]);
-  console.log(reader, typeof(reader));
-  reader.onload = (event:any)=>{
-    this.url = event.target.result;
+  // onSelect(event){
+  // if(event.target.files){
+  // let reader = new FileReader();
+  // console.log(reader , typeof(reader));
+  // reader.readAsDataURL(event.target.files[0]);
+  // console.log(reader, typeof(reader));
+  // reader.onload = (event:any)=>{
+  //   this.url = event.target.result;
+  // }
+  // console.log(reader, typeof(reader));
+  // }
+  // }
+  onSelect(event) {
+    if (event.target.files) {
+      const file = event.target.files[0];
+      const fileSizeMB = file.size / (1024 * 1024); // Size in MB
+      if (fileSizeMB <= 2) {
+        let reader = new FileReader();
+        reader.readAsDataURL(file);
+        console.log(reader);
+        reader.onload = (event) => {
+          // this.url = event.target.result;
+          this.url = event.target.result as string;
+          console.log(reader);
+        };
+      } else {
+        // alert('File size exceeds the maximum limit of 2MB');
+        this.toastr.error('File size exceeds the maximum limit of 2MB');
+      }
+    }
   }
-  console.log(reader, typeof(reader));
-  }
-  }
-
-showSuccessToast() {
-  this.toastr.success('Image uploaded successfully', 'Success');
-}
-
 ngOnInit(): void {
+  if (!this.form.controls['modeOfWork'].value) {
+    this.form.controls['city'].disable();
+    this.form.controls['floor'].disable();
+    this.form.controls['column'].disable();
+    this.form.controls['seatNo'].disable();
+    this.form.controls['days'].disable();
+  }
   this.form.controls['modeOfWork'].valueChanges.subscribe(value => {
-     if(value === 'Work from home'){
+   if(value === 'Work from home'){
       this.form.controls['city'].disable();
       this.form.controls['floor'].disable();
       this.form.controls['column'].disable();
       this.form.controls['seatNo'].disable();
+      this.form.controls['days'].disable(); 
     }
+    else if (value === 'Hybrid') {
+  this.form.controls['city'].enable();
+  this.form.controls['floor'].enable();
+  this.form.controls['column'].enable();
+  this.form.controls['seatNo'].enable();
+  this.form.controls['days'].enable(); 
+  }
     else {
       this.form.controls['city'].enable();
       this.form.controls['floor'].enable();
       this.form.controls['column'].enable();
       this.form.controls['seatNo'].enable();
+      this.form.controls['days'].disable(); 
     }
   });
 }
-  }
-  
+}
 
 
    

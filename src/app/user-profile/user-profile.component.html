@@ -18,7 +18,7 @@
 
 
   <label for="phoneNumber">Phone Number</label>
-  <input type="text" formControlName="phoneNumber">
+  <input type="text" formControlName="phoneNumber" maxlength="10">
   <div *ngIf="((submitted && f['phoneNumber'].errors) || (f['phoneNumber'].touched)) ||(f['phoneNumber'].dirty)" class="invalid-feedback d-block">
     <div *ngIf="f['phoneNumber'].errors?.['required']">Please enter phone no</div>
     <div *ngIf="f['phoneNumber'].errors?.['minlength'] && !f['phoneNumber'].errors?.['pattern']">Only 10-digit number is required</div>
@@ -57,27 +57,21 @@
     <div *ngIf="f['designation'].errors?.['required']">Please select Mode of work</div>
   </div></div>
   </div>
+  <div *ngIf="f['modeOfWork'].value === 'Hybrid'"> 
+    <label>Days:</label><br>
+  <label><input type="checkbox" formControlName="days"value="Monday"> Monday</label>
+    <label><input type="checkbox" formControlName="days"value="Tuesday"> Tuesday</label>
+    <label><input type="checkbox" formControlName="days"value="Wednesday"> Wednesday</label>
+    <label><input type="checkbox" formControlName="days" value="Thursday"> Thursday</label>
+    <label><input type="checkbox" formControlName="days"value="Friday"> Friday</label>
+  </div>
 
-      <label for="monday">
-        <input type="checkbox" formControlName="selectedDays" id="monday" value="Monday">
-        Monday
-      </label>
-      <label for="tuesday">
-        <input type="checkbox" formControlName="selectedDays" id="tuesday" value="Monday">
-        Tuesday
-      </label>
-      <label for="wednesday">
-        <input type="checkbox" formControlName="selectedDays" id="Wednesday" value="wednesday">
-        Wednesday
-      </label>
-      <label for="thursday">
-        <input type="checkbox" formControlName="selectedDays" id="thursday" value="thursday">
-       Thursday
-      </label>
-      <label for="friday">
-        <input type="checkbox" formControlName="selectedDays" id="friday" value="friday">
-       Friday
-      </label>
+
+  <!-- <div *ngFor = "let day of days">
+    <input type="checkbox" >
+    <label> {{day}} </label>
+  </div> -->
+
 
   <label for="City">City</label>
   <select name=" City" formControlName="city">
